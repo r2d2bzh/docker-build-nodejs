@@ -16,6 +16,7 @@ on:
 
 jobs:
   build-and-publish:
-    uses: ./.github/workflows/docker-publish.yaml
+    # https://github.community/t/ref-head-in-reusable-workflows/203690/30
+    uses: r2d2bzh/docker-build-nodejs/.github/workflows/docker-publish.yaml@main
     with:
       image_name_suffix: runtime
