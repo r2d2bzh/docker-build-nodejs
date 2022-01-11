@@ -1,0 +1,15 @@
+{
+  "name": "test-wrtc",
+  "version": "0.0.0",
+  "description": "test Docker image build procedure for a NodeJS based service with wrtc",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.6"
+  }
+}

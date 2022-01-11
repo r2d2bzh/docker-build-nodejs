@@ -1,0 +1,68 @@
+services:
+  builder:
+    image: r2d2bzh/docker-build-nodejs-builder:${VERSION:-dev}
+    build:
+      context: builder
+      args:
+        NODE_JS_VERSION: ${NODE_JS_VERSION}
+        NPM_VERSION: ${NPM_VERSION}
+    entrypoint: ["tail", "-f", "/dev/null"]
+
+  runtime:
+    image: r2d2bzh/docker-build-nodejs-runtime:${VERSION:-dev}
+    build:
+      context: runtime
+    profiles:
+      - disabled
+
+  test-config:
+    build:
+      context: test/config
+    volumes:
+      - ./test/config/config:/home/nonroot/config
+
+  test-dynamic:
+    build:
+      context: test/dynamic
+
+  test-esm:
+    build:
+      context: test/esm
+
+  # tag::test-simple[]
+  test-simple:
+    build:
+      context: test/simple
+      args:
+        main: simple.js
+  # end::test-simple[]
+
+  test-pkg-options:
+    build:
+      context: test/pkg-options
+      args:
+        PKG_OPTIONS: -o /tmp/moved-service
+
+  test-wrtc:
+    build:
+      context: test/wrtc
+
+  devenv:
+    image: r2d2bzh/docker-build-nodejs-devenv:${VERSION:-dev}
+    build:
+      context: devenv
+      args:
+        NODE_JS_VERSION: ${NODE_JS_VERSION}
+        NPM_VERSION: ${NPM_VERSION}
+
+  #tag::dev[]
+  dev:
+    build:
+      context: dev
+      args:
+        USER: ${LOGNAME}
+        UID: ${UID}
+        GID: ${GID}
+    volumes:
+      - .:/home/user/dev
+  #end::dev[]
