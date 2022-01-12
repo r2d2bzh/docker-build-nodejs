@@ -1,6 +1,6 @@
 services:
   builder:
-    image: r2d2bzh/docker-build-nodejs-builder:${VERSION:-dev}
+    image: ghcr.io/r2d2bzh/docker-build-nodejs-builder:${VERSION:-dev}
     build:
       context: builder
       args:
@@ -9,7 +9,7 @@ services:
     entrypoint: ["tail", "-f", "/dev/null"]
 
   runtime:
-    image: r2d2bzh/docker-build-nodejs-runtime:${VERSION:-dev}
+    image: ghcr.io/r2d2bzh/docker-build-nodejs-runtime:${VERSION:-dev}
     build:
       context: runtime
     profiles:
@@ -48,7 +48,7 @@ services:
       context: test/wrtc
 
   devenv:
-    image: r2d2bzh/docker-build-nodejs-devenv:${VERSION:-dev}
+    image: ghcr.io/r2d2bzh/docker-build-nodejs-devenv:${VERSION:-dev}
     build:
       context: devenv
       args:

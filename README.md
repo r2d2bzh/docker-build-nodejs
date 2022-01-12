@@ -28,7 +28,7 @@ You will have to provide a `Dockerfile` with at least the following line:
 </div>
 
 ``` Dockerfile
-FROM r2d2bzh/docker-build-nodejs-devenv:dev
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-devenv:dev
 ```
 
 <div class="important">
@@ -115,8 +115,8 @@ You will have to provide a `Dockerfile` with at least the following two lines:
 </div>
 
 ``` Dockerfile
-FROM r2d2bzh/docker-build-nodejs-builder:dev as builder
-FROM r2d2bzh/docker-build-nodejs-runtime:dev
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev as builder
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-runtime:dev
 ```
 
 <div class="important">
@@ -134,8 +134,8 @@ This `Dockerfile` should be located at the root of your NodeJS project or at lea
 </div>
 
 ``` Dockerfile
-FROM r2d2bzh/docker-build-nodejs-builder:dev as builder
-FROM r2d2bzh/docker-build-nodejs-runtime:dev
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev as builder
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-runtime:dev
 EXPOSE 8080
 ```
 
