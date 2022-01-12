@@ -65,6 +65,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PREFIX }}-${{ inputs.image_name_suffix }}
 
+      # Extract build arguments from .env file
+      - name: Extract build arguments from .env
+        id: envbuildargs
+        uses: falti/dotenv-action@3531b0d7feea718f030b48fdb628a3d2d1bf005d
+
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
@@ -75,6 +80,9 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NODE_JS_VERSION=${{ steps.envbuildargs.outputs.node_js_version }}
+            NPM_VERSION=${{ steps.envbuildargs.outputs.npm_version }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
