@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/cc-debian11@sha256:2510b5f6a5ca842b863b298ef6b1e423b7b0f1a5343db5e94ffc1943d0e70098
+FROM gcr.io/distroless/cc-debian11@sha256:0090fc97e9cbc060fb5eb1bcee153997942096f51006bef2200233d762b2bb0e
 
 ONBUILD COPY --from=builder /tmp/service /
 
