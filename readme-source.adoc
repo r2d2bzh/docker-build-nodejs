@@ -154,3 +154,36 @@ services:
 
 Once the compose file is available, simply issue the command `docker-compose build production` to build the image.
 You can also push this new image to a registry with `docker-compose push production` as long as the image tag refers to a location on this registry.
+
+=== Native modules
+
+Automatic native modules bundling https://github.com/evanw/esbuild/issues/1051[might sometimes fail] for various reasons.
+The main reason is most of the time due to the fact that the files to bundle https://github.com/evanw/esbuild/issues/1051#issuecomment-807732496[cannot be inferred by esbuild].
+
+In this particular cases, follow the instructions provided in the console where the build was operated:
+
+.excerpt from builder/bundle/index.js
+[source,javascript]
+----
+include::builder/bundle/index.js[tag=external-warning,indent=0]
+----
+
+The console then displays the list of externalized modules and the Dockerfile `COPY` lines to use.
+
+The `test/sharp` test case of this repository follows these advices for `sharp`:
+
+.package.json
+[source,json]
+----
+{
+  ...
+include::test/sharp/package.json[tag=esbuild-options]
+  ...
+}
+----
+
+.Dockerfile
+[source,dockerfile]
+----
+include::test/sharp/Dockerfile[]
+----

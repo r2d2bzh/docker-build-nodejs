@@ -1,5 +1,5 @@
 ---
-date: 2022-01-11
+date: 2022-01-25
 title: NodeJS image builder
 ---
 
@@ -203,3 +203,54 @@ services:
 ```
 
 Once the compose file is available, simply issue the command `docker-compose build production` to build the image. You can also push this new image to a registry with `docker-compose push production` as long as the image tag refers to a location on this registry.
+
+## Native modules
+
+Automatic native modules bundling [might sometimes fail](https://github.com/evanw/esbuild/issues/1051) for various reasons. The main reason is most of the time due to the fact that the files to bundle [cannot be inferred by esbuild](https://github.com/evanw/esbuild/issues/1051#issuecomment-807732496).
+
+In this particular cases, follow the instructions provided in the console where the build was operated:
+
+<div class="formalpara-title">
+
+**excerpt from builder/bundle/index.js**
+
+</div>
+
+``` javascript
+console.warn('/!\\ Some node modules were automatically externalized');
+console.warn('If one of these modules can still NOT be loaded:');
+console.warn(' - add the module name in your package.json file under { esbuildOptions: { external: [...] } }');
+console.warn(' - add the module COPY line provided in the following list at the end of your Dockerfile');
+```
+
+The console then displays the list of externalized modules and the Dockerfile `COPY` lines to use.
+
+The `test/sharp` test case of this repository follows these advices for `sharp`:
+
+<div class="formalpara-title">
+
+**package.json**
+
+</div>
+
+``` json
+{
+  ...
+  "esbuildOptions": {
+    "external": ["sharp"]
+  },
+  ...
+}
+```
+
+<div class="formalpara-title">
+
+**Dockerfile**
+
+</div>
+
+``` dockerfile
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev as builder
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-runtime:dev
+COPY --from=builder /project/node_modules/sharp/ ./node_modules/sharp/
+```
