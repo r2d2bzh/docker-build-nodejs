@@ -34,7 +34,7 @@ const bundle = async () => {
 				console.warn(`${name}:`)
 				Object.entries(locations).forEach(
 					([location, version]) => console.warn(
-						` - ${version}: COPY --from=builder ${location} ./${location.split('/').slice(1).join('/')}`
+						` - ${version}: COPY --from=builder ${location}/ ./${location.split('/').slice(1).join('/')}/`
 					)
 				);
 			});
