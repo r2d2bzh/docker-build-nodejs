@@ -15,16 +15,16 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Build base images
-      run: docker-compose build builder runtime
+      - name: Build base images
+        run: docker-compose build builder runtime
 
-    - name: Run test suite
-      run: docker-compose run --rm test
+      - name: Run test suite
+        run: docker-compose run --rm test
 
-    - name: Tear down containers
-      if: always()
-      run: docker-compose down
+      - name: Tear down containers
+        if: always()
+        run: docker-compose down
