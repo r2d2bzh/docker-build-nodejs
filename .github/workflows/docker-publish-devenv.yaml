@@ -1,21 +1,14 @@
 name: Docker devenv
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
 
 on:
-  push:
-    branches: [ main ]
-    # Publish semver tags as releases.
-    tags: [ '*.*.*' ]
-  pull_request:
-    branches: [ main ]
+  workflow_run:
+    workflows: [Test]
+    types: [completed]
 
 
 jobs:
-  build-and-publish:
+  on-success:
     # https://github.community/t/ref-head-in-reusable-workflows/203690/30
     uses: r2d2bzh/docker-build-nodejs/.github/workflows/docker-publish.yaml@main
     with:
