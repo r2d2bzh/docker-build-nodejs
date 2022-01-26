@@ -1,0 +1,30 @@
+name: Test
+
+
+on:
+  push:
+    branches: [ main ]
+    # Publish semver tags as releases.
+    tags: [ '*.*.*' ]
+  pull_request:
+    branches: [ main ]
+
+
+jobs:
+  test-suite:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build base images
+        run: docker-compose build builder runtime
+
+      - name: Run test suite
+        run: docker-compose run --rm test
+
+      - name: Tear down containers
+        if: always()
+        run: docker-compose down

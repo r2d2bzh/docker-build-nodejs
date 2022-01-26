@@ -20,18 +20,34 @@ services:
       context: test/config
     volumes:
       - ./test/config/config:/home/nonroot/config
+    profiles:
+      - test
 
   test-dynamic:
     build:
       context: test/dynamic
+    profiles:
+      - test
 
   test-esm:
     build:
       context: test/esm
+    profiles:
+      - test
+
+  test-pkg-options:
+    build:
+      context: test/pkg-options
+      args:
+        PKG_OPTIONS: -o /tmp/moved-service
+    profiles:
+      - test
 
   test-sharp:
     build:
       context: test/sharp
+    profiles:
+      - test
 
   # tag::test-simple[]
   test-simple:
@@ -40,16 +56,28 @@ services:
       args:
         main: simple.js
   # end::test-simple[]
-
-  test-pkg-options:
-    build:
-      context: test/pkg-options
-      args:
-        PKG_OPTIONS: -o /tmp/moved-service
+    profiles:
+      - test
 
   test-wrtc:
     build:
       context: test/wrtc
+    profiles:
+      - test
+
+  test:
+    image: busybox
+    command: ["echo", "all tests were passed successfully"]
+    depends_on:
+      test-config: { condition: service_completed_successfully }
+      test-dynamic: { condition: service_completed_successfully }
+      test-esm: { condition: service_completed_successfully }
+      test-pkg-options: { condition: service_completed_successfully }
+      test-sharp: { condition: service_completed_successfully }
+      test-simple: { condition: service_completed_successfully }
+      test-wrtc: { condition: service_completed_successfully }
+    profiles:
+      - test
 
   devenv:
     image: ghcr.io/r2d2bzh/docker-build-nodejs-devenv:${VERSION:-dev}

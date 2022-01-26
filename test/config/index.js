@@ -1,4 +1,8 @@
 // This test sample ensures the support for the npm module named "config" (see the "pkg/assets" section in package.json)
-const config = require('config');
-
-setInterval(() => console.log(process.versions.node, config.get('message')), config.get('delay'));
+try {
+  const config = require('config');
+  console.log(process.versions.node, config.get('message'));
+} catch (error) {
+  console.error(error);
+  process.exitCode = 1;
+}
