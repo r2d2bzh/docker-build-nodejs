@@ -1,0 +1,53 @@
+name: Test and build
+
+
+on:
+
+  push:
+    branches: [ main ]
+    # Publish semver tags as releases.
+    tags: [ '*.*.*' ]
+
+  pull_request:
+    branches: [ main ]
+
+
+jobs:
+
+  test:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build base images
+        run: docker-compose build builder runtime
+
+      - name: Run test suite
+        run: docker-compose run --rm test
+
+      - name: Tear down containers
+        if: always()
+        run: docker-compose down
+
+  builder:
+    needs: test
+    # https://github.community/t/ref-head-in-reusable-workflows/203690/30
+    uses: r2d2bzh/docker-build-nodejs/.github/workflows/docker-publish.yaml@main
+    with:
+      image_name_suffix: builder
+
+  devenv:
+    needs: test
+    # https://github.community/t/ref-head-in-reusable-workflows/203690/30
+    uses: r2d2bzh/docker-build-nodejs/.github/workflows/docker-publish.yaml@main
+    with:
+      image_name_suffix: devenv
+
+  runtime:
+    needs: test
+    # https://github.community/t/ref-head-in-reusable-workflows/203690/30
+    uses: r2d2bzh/docker-build-nodejs/.github/workflows/docker-publish.yaml@main
+    with:
+      image_name_suffix: runtime
