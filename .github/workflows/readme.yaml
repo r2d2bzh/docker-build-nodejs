@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install asciidoctor-reducer
-        run: gem install asciidoctor-reducer --pre
+        run: sudo gem install asciidoctor-reducer --pre
 
       - name: Checkout repository
         uses: actions/checkout@v2
