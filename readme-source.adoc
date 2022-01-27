@@ -1,23 +1,37 @@
 :icons: font
 :source-highlighter: highlightjs
 
+:esbuild: https://github.com/evanw/esbuild
+
 = NodeJS image builder
 
-This repository mainly builds three Docker images used during the development of a NodeJS application.
+Developing NodeJS applications can be challenging, dockerizing them for production use adds another layer of complexity as only the application's functional scope should be provided by the production image.
 
-The `docker-build-nodejs-devenv` image is provided to ease the building of a Docker image used during development.
+`docker-build-nodejs` helps in building a production image that is reduced to the application's functional scope.
 
-The two other images are provided to ease the building of production Docker images embedding a NodeJS based application:
+In order to do this, `docker-build-nodejs` relies on:
 
-* `docker-build-nodejs-builder` is in charge a building a Linux executable from the Javascript files
-* `docker-build-nodejs-runtime` is in charge of providing the *minimal* base environment for the linux executable to run on
+- https://github.com/vercel/pkg[pkg] to bundle the application as a single executable
+- {esbuild}[esbuild] to work around current pkg's https://github.com/vercel/pkg/issues/1291[lack of support] for http://nodejs.org/dist/latest-v16.x/docs/api/esm.html[ESM]
+- https://github.com/GoogleContainerTools/distroless[Google's distroless docker images] to ensure only the NodeJS based executable is available in the production image
+
+== Images provided
+
+This repository mainly builds three Docker images.
+
+The `docker-build-nodejs-devenv` image is provided to ease the building of a Docker image tailored for development.
+
+The two other images are designed as a mean to build production Docker images embedding a NodeJS based application:
+
+* `docker-build-nodejs-builder` is in charge of a building a Linux executable from the Javascript files
+* `docker-build-nodejs-runtime` is in charge of providing the *minimal* base environment for the Linux executable to run on
 
 
 == Using a dockerized development environment
 
 The goal is to ensure the usage of predictable versions of commands such as `npm` or `node`.
 In order to do this, a development Docker container providing the necessary versions of these tools is started.
-One keypoint is that all these tools needs to be started by a user with the same user and group identifier than the developer.
+One keypoint is that all these tools needs to be started by a user with the same user and group identifiers than the ones used by the developer on its host.
 
 === Creating a https://docs.docker.com/engine/reference/builder/[Dockerfile]
 
@@ -47,7 +61,7 @@ include::docker-compose.yml[tags=dev]
 ====
 Most of the time the `UID` variable is already defined by your shell but is not exported.
 `GID` must be the numeric identifier of your user default group.
-`USER` can also be defined if you need to change the username for whatever reason, it can be for instance set to `${LOGNAME}` in the compose file as this is the POSIX variable containing the user login.
+`USER` can also be defined if you need to change the username for whatever reason, it can be for instance set to `${LOGNAME}` in the compose file as this is the POSIX variable containing the host's user login name.
 
 Hence:
 
@@ -111,8 +125,8 @@ WARNING: Use the *same tag* for both `FROM` instructions as both `builder` and `
 
 === Specifying the application's main module
 
-By default https://esbuild.github.io/[esbuild] will be passed `index.js` as the main module of the application to embed.
-If the application main module is not located at `index.js`, simply set the `main` build argument to the right path of the main module:
+By default {esbuild}[esbuild] will be passed `index.js` as the main module of the application to embed.
+If the application main module is not `index.js`, simply set the `main` build argument to the right path of the main module:
 
 [source,yaml]
 ----
@@ -149,7 +163,7 @@ services:
   production:
     image: <target>
     build:
-      context: .
+      context: <Dockerfile folder>
 ----
 
 Once the compose file is available, simply issue the command `docker-compose build production` to build the image.
@@ -157,10 +171,10 @@ You can also push this new image to a registry with `docker-compose push product
 
 === Native modules
 
-Automatic native modules bundling https://github.com/evanw/esbuild/issues/1051[might sometimes fail] for various reasons.
-The main reason is most of the time due to the fact that the files to bundle https://github.com/evanw/esbuild/issues/1051#issuecomment-807732496[cannot be inferred by esbuild].
+Automatic native modules bundling {esbuild}/issues/1051[might sometimes fail] for various reasons.
+The main reason is most of the time due to the fact that the files to bundle {esbuild}/issues/1051#issuecomment-807732496[cannot be inferred by esbuild].
 
-In this particular cases, follow the instructions provided in the console where the build was operated:
+In these particular cases, follow the instructions provided in the console where the build was operated:
 
 .excerpt from builder/bundle/index.js
 [source,javascript]
