@@ -2,6 +2,7 @@
 :source-highlighter: highlightjs
 
 :esbuild: https://github.com/evanw/esbuild
+:pkg: https://github.com/vercel/pkg
 
 = NodeJS image builder
 
@@ -11,8 +12,8 @@ Developing NodeJS applications can be challenging, dockerizing them for producti
 
 In order to do this, `docker-build-nodejs` relies on:
 
-- https://github.com/vercel/pkg[pkg] to bundle the application as a single executable
-- {esbuild}[esbuild] to work around current pkg's https://github.com/vercel/pkg/issues/1291[lack of support] for http://nodejs.org/dist/latest-v16.x/docs/api/esm.html[ESM]
+- {pkg}[pkg] to bundle the application as a single executable
+- {esbuild}[esbuild] to work around current pkg's {pkg}/issues/1291[lack of support] for http://nodejs.org/dist/latest-v16.x/docs/api/esm.html[ESM]
 - https://github.com/GoogleContainerTools/distroless[Google's distroless docker images] to ensure only the NodeJS based executable is available in the production image
 
 == Images provided
