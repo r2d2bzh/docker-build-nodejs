@@ -51,3 +51,23 @@ jobs:
     uses: r2d2bzh/docker-build-nodejs/.github/workflows/docker-publish.yaml@main
     with:
       image_name_suffix: runtime
+
+  trivy:
+    needs: runtime
+    permissions:
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Run Trivy on runtime image
+        uses: aquasecurity/trivy-action@2a2157eb22c08c9a1fac99263430307b8d1bc7a2
+        with:
+          image-ref: 'ghcr.io/r2d2bzh/docker-build-nodejs-runtime:${{ github.ref_name }}'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
