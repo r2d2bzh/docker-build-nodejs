@@ -6,7 +6,7 @@ The versions currently being supported with security updates are:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.0.x   | :heavy_check_mark: |
+| 1.1.x   | :heavy_check_mark: |
 
 ## Reporting a Vulnerability
 
