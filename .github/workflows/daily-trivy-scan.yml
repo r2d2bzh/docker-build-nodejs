@@ -1,0 +1,26 @@
+name: Daily Trivy scan
+
+on:
+  schedule:
+    - cron: '23 1 * * *'
+
+jobs:
+  build:
+    permissions:
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    name: Build
+    runs-on: "ubuntu-18.04"
+    steps:
+      - name: Scan runtime image
+        uses: aquasecurity/trivy-action@2a2157eb22c08c9a1fac99263430307b8d1bc7a2
+        with:
+          image-ref: 'ghcr.io/r2d2bzh/docker-build-nodejs-runtime:main'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-daily-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-daily-results.sarif'
