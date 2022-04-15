@@ -6,8 +6,8 @@ on:
   push:
     paths:
       - readme-source.adoc
-    tags-ignore:
-      - '*'
+    branches:
+      - '**'
 
 
 jobs:
