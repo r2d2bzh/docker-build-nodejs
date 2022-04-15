@@ -129,6 +129,9 @@ include::test/simple/Dockerfile[]
 IMPORTANT: Replace the tag `dev` with a tag delivered on the https://github.com/r2d2bzh/docker-build-nodejs[r2d2bzh/docker-build-nodejs project].
 
 This `Dockerfile` should be located at the root of your NodeJS project or at least in a folder containing all the source code of the NodeJS application.
+
+For an explanation of what is the `share` image see <<Passing assets from outside the build context>>.
+
 You can optionally add additional `Dockerfile` commands, it is at least recommended to document the port the NodeJS application is listening on (if the NodeJS application offers such a port):
 
 .Dockerfile
@@ -220,3 +223,17 @@ include::test/sharp/package.json[tag=esbuild-options]
 ----
 include::test/sharp/Dockerfile[]
 ----
+
+=== Passing assets from outside the build context
+
+For most cases, you only need to rely on the build context to build your image and that is a good thing because you can rely on the https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache[build cache].
+
+During the build steps of a NodeJS application, assets are already downloaded from outside of the build context, namely the NPM packages that the `package-lock.json` project file details.
+But what if you do not want to get assets from the outside world (outside meaning here "not Docker related")?
+
+You can do this thanks to a `share` image.
+The *whole root filesystem* of the `share` image is copied in the project context of the `builder` image before the NodeJS application is embedded as an executable (before the `esbuild` step).
+So particular care has to be taken to not overlap what is already provided by the build context (unless this is intentional).
+
+As there is currently no way to operate this `ONBUILD COPY` step optionally (by using a build `ARG` for instance), the declaration of this `share` image is *mandatory*.
+This is why the line `FROM scratch as share` is present before the `builder` image when there is no need for assets outside of the build context (`scratch` is https://hub.docker.com/_/scratch[an empty image] meaning that no assets are brought).

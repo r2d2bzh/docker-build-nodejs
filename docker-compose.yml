@@ -43,6 +43,22 @@ services:
     profiles:
       - test
 
+  # This one is just a satellite of test-share.
+  # Do not use it as a test case.
+  test-share-index:
+    build:
+      context: test/share/index
+    profiles:
+      - test
+
+  # This one must be declared after test-share-index
+  # to guarantee the build order.
+  test-share:
+    build:
+      context: test/share/context
+    profiles:
+      - test
+
   test-sharp:
     build:
       context: test/sharp
@@ -73,6 +89,7 @@ services:
       test-dynamic: { condition: service_completed_successfully }
       test-esm: { condition: service_completed_successfully }
       test-pkg-options: { condition: service_completed_successfully }
+      test-share: { condition: service_completed_successfully }
       test-sharp: { condition: service_completed_successfully }
       test-simple: { condition: service_completed_successfully }
       test-wrtc: { condition: service_completed_successfully }

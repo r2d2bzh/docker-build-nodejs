@@ -60,6 +60,7 @@ ONBUILD ENV main=${main}
 ONBUILD ENV PKG_TARGET=${PKG_TARGET}
 ONBUILD ENV PKG_OPTIONS=${PKG_OPTIONS}
 
+ONBUILD COPY --chown=user --from=share ["/", "/project/"]
 ONBUILD COPY --chown=user . /project
 ONBUILD WORKDIR /project
 ONBUILD RUN \

@@ -24,6 +24,9 @@ jobs:
       - name: Build base images
         run: docker-compose build builder runtime
 
+      - name: Build test images
+        run: docker-compose --profile test build
+
       - name: Run test suite
         run: docker-compose run --rm test
 
