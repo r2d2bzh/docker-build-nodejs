@@ -24,6 +24,16 @@ In order to do this, `docker-build-nodejs` relies on:
 - {esbuild}[esbuild] to work around current pkg's {pkg}/issues/1291[lack of support] for http://nodejs.org/dist/latest-v16.x/docs/api/esm.html[ESM]
 - https://github.com/GoogleContainerTools/distroless[Google's distroless docker images] to ensure only the NodeJS based executable is available in the production image
 
+[NOTE]
+====
+The following sections details how these different Docker image can be used to embed a NodeJS application.
+
+Particular details are given about `docker-compose` usage, the steps described in these compose sections are optional.
+You can bypass them if you do not want to use `docker-compose`.
+
+*But* you will still have to *read these sections* in order to get a better understanding of how to use the images.
+====
+
 == Images provided
 
 This repository mainly builds three Docker images.
