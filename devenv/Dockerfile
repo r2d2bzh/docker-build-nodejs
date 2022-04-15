@@ -3,7 +3,7 @@ ARG NODE_JS_VERSION
 FROM node:${NODE_JS_VERSION}-alpine3.15
 ARG NPM_VERSION
 
-RUN apk add --no-cache build-base=0.5-r2 git=2.34.1-r0 python2=2.7.18-r4 sudo=1.9.8_p2-r1 pkgconf=1.8.0-r0
+RUN apk add --no-cache build-base=0.5-r2 git=2.34.2-r0 python2=2.7.18-r4 sudo=1.9.8_p2-r1 pkgconf=1.8.0-r0
 RUN npm install -g npm@${NPM_VERSION} && npm version
 
 ONBUILD ARG USER=user
