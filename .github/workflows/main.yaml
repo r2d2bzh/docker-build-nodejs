@@ -22,17 +22,17 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build base images
-        run: docker-compose build builder runtime
+        run: . ./ensure-compose-env.sh && docker-compose build builder runtime
 
       - name: Build test images
-        run: docker-compose --profile test build
+        run: . ./ensure-compose-env.sh && docker-compose --profile test build
 
       - name: Run test suite
-        run: docker-compose run --rm test
+        run: . ./ensure-compose-env.sh && docker-compose run --rm test
 
       - name: Tear down containers
         if: always()
-        run: docker-compose down
+        run: . ./ensure-compose-env.sh && docker-compose down
 
   builder:
     needs: test
