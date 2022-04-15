@@ -26,7 +26,7 @@ In order to do this, `docker-build-nodejs` relies on:
 
 [NOTE]
 ====
-The following sections details how these different Docker image can be used to embed a NodeJS application.
+The following sections details how these different Docker images can be used to embed a NodeJS application.
 
 Particular details are given about `docker-compose` usage, the steps described in these compose sections are optional.
 You can bypass them if you do not want to use `docker-compose`.
