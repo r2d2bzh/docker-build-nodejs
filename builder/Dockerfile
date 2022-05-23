@@ -12,7 +12,7 @@ ARG PKG_OS
 ARG PKG_ARCH
 
 RUN npm install -g npm@${NPM_VERSION} && npm version
-RUN npm install --unsafe-perm=true -g pkg@5.6.0
+RUN npm install --unsafe-perm=true -g pkg@5.7.0
 
 RUN adduser --disabled-password --gecos user user
 USER user
@@ -51,7 +51,7 @@ COPY --chown=user ./bundle/ /bundle/
 WORKDIR /bundle
 RUN \
     npm init -y && \
-    npm install esbuild@0.14.38 read-package-json-fast@2.0.3
+    npm install esbuild@0.14.39 read-package-json-fast@2.0.3
 
 ONBUILD ARG main=index.js
 ONBUILD ARG PKG_TARGET="${PKG_NODE}-${PKG_OS}-${PKG_ARCH}"
