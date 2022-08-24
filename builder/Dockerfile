@@ -12,7 +12,7 @@ ARG PKG_OS
 ARG PKG_ARCH
 
 RUN npm install -g npm@${NPM_VERSION} && npm version
-RUN npm install --unsafe-perm=true -g pkg@5.7.0
+RUN npm install --unsafe-perm=true -g pkg@5.8.0
 
 RUN adduser --disabled-password --gecos user user
 USER user
