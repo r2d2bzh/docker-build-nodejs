@@ -51,7 +51,7 @@ COPY --chown=user ./bundle/ /bundle/
 WORKDIR /bundle
 RUN \
     npm init -y && \
-    npm install esbuild@0.14.42 read-package-json-fast@2.0.3
+    npm install esbuild@0.15.8 read-package-json-fast@2.0.3
 
 ONBUILD ARG main=index.js
 ONBUILD ARG PKG_TARGET="${PKG_NODE}-${PKG_OS}-${PKG_ARCH}"
