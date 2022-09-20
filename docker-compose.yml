@@ -35,6 +35,12 @@ services:
     profiles:
       - test
 
+  test-keep-names:
+    build:
+      context: test/keep-names
+    profiles:
+      - test
+
   test-pkg-options:
     build:
       context: test/pkg-options
@@ -88,6 +94,7 @@ services:
       test-config: { condition: service_completed_successfully }
       test-dynamic: { condition: service_completed_successfully }
       test-esm: { condition: service_completed_successfully }
+      test-keep-names: { condition: service_completed_successfully }
       test-pkg-options: { condition: service_completed_successfully }
       test-share: { condition: service_completed_successfully }
       test-sharp: { condition: service_completed_successfully }
