@@ -55,7 +55,8 @@ jobs:
     with:
       image_name_suffix: runtime
 
-  trivy:
+  trivy-main:
+    if: ${{ github.ref_name == 'main' }}
     needs: runtime
     permissions:
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
