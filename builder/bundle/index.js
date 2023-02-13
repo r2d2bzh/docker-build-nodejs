@@ -1,4 +1,3 @@
-const { inspect } = require('util');
 const readPackage = require('read-package-json-fast');
 const { externalNativeModulesPlugin } = require('./native_modules/plugin');
 
