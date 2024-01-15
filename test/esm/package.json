@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "get-stream": "^6.0.1",
-    "into-stream": "^7.0.0"
+    "get-stream": "^8.0.1",
+    "into-stream": "^8.0.1"
   }
 }
