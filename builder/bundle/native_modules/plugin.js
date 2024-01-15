@@ -1,8 +1,8 @@
-const path = require('path')
+import path from 'node:path';
 
-const readPackageJson = require('read-package-json-fast')
+import readPackageJson from 'read-package-json-fast';
 
-const { isNativeModule } = require('./detector')
+import { isNativeModule } from './detector.js';
 
 // Filters out relative or absolute file paths.
 const packageFilter = /^([^./]*)$/
@@ -21,21 +21,21 @@ const findNativeModule = (packageJsonPath, cache) => {
   return cache[packageJsonPath]
 }
 
-const externalNativeModulesPlugin = (externalizedModules) => ({
+export const externalNativeModulesPlugin = (externalizedModules) => ({
   name: 'external-native-modules',
   setup(build) {
     const cache = {}
 
     build.onResolve({ filter: packageFilter }, async (args) => {
-      const package = packageName.exec(args.path)
+      const packageJson = packageName.exec(args.path)
 
-      if (!package) return
+      if (!packageJson) return
 
       let directory = args.resolveDir
 
       while (true) {
         if (path.basename(directory) !== 'node_modules') {
-          const modulePath = path.join(directory, 'node_modules', package[1])
+          const modulePath = path.join(directory, 'node_modules', packageJson[1])
           const packageJsonPath = path.join(modulePath, 'package.json')
           const [isNative, packageJsonData] = await findNativeModule(packageJsonPath, cache)
 
@@ -65,5 +65,3 @@ const externalNativeModulesPlugin = (externalizedModules) => ({
     })
   },
 })
-
-module.exports = { externalNativeModulesPlugin }

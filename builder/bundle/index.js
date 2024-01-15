@@ -1,14 +1,17 @@
-const readPackage = require('read-package-json-fast');
-const { externalNativeModulesPlugin } = require('./native_modules/plugin');
+import readPackage from 'read-package-json-fast';
+import esbuild from 'esbuild';
+
+import { externalNativeModulesPlugin } from './native_modules/plugin.js';
+
 
 const [target, main, outfile] = process.argv.slice(2);
 
 const bundle = async () => {
 	try {
-		const package = await readPackage('package.json');
+		const packageJson = await readPackage('package.json');
 		const externalizedModules = {};
 
-		await require('esbuild').build({
+		await esbuild.build({
 			entryPoints: [main],
 			bundle: true,
 			sourcemap: 'inline',
@@ -16,7 +19,7 @@ const bundle = async () => {
 			target,
 			plugins: [externalNativeModulesPlugin(externalizedModules)],
 			outfile,
-			...(package.esbuildOptions ? package.esbuildOptions : {}),
+			...(packageJson.esbuildOptions ? packageJson.esbuildOptions : {}),
 		})
 
 		const externalizedList = Object.entries(externalizedModules);

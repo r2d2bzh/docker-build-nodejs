@@ -1,10 +1,8 @@
 ARG NODE_JS_VERSION
 
-FROM node:${NODE_JS_VERSION}-alpine3.16
-ARG NPM_VERSION
+FROM node:${NODE_JS_VERSION}-bookworm-slim
 
-RUN apk add --no-cache build-base=0.5-r3 git=2.36.4-r0 python3=3.10.10-r0 sudo=1.9.12-r1 pkgconf=1.8.1-r0
-RUN npm install -g npm@${NPM_VERSION} && npm version
+RUN apt-get update && apt-get install sudo
 
 ONBUILD ARG USER=user
 ONBUILD ARG UID=1001
@@ -14,7 +12,7 @@ ONBUILD RUN \
         echo "$USER:x:$UID:$GID::/home/user:" >> /etc/passwd && \
         echo "$USER:!:$(($(date +%s) / 60 / 60 / 24)):0:99999:7:::" >> /etc/shadow && \
         echo "$USER:x:$GID:" >> /etc/group && \
-        mkdir -p /home/user/dev && chown -R $UID: /home/user && \
+        mkdir -p /home/user/dev && chown -R $USER\: /home/user && \
         echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/user
 
 ONBUILD USER $USER

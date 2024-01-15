@@ -2,9 +2,9 @@
   "name": "test",
   "version": "0.0.0",
   "description": "test Docker image build procedure for a NodeJS based service",
-  "main": "index.js",
+  "main": "simple.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node simple.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

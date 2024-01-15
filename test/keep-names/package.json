@@ -13,7 +13,8 @@
     "external": [
       "avsc",
       "protobufjs/minimal",
-      "thrift"
+      "thrift",
+      "kafka-node"
     ]
   },
   "author": "",

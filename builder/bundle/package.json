@@ -1,0 +1,16 @@
+{
+  "name": "esbuild-bundler",
+  "version": "1.0.0",
+  "description": "Bundle javascript project using esbuild",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "esbuild": "0.19.11",
+    "read-package-json-fast": "^3.0.2"
+  },
+  "author": "",
+  "license": "ISC"
+}
