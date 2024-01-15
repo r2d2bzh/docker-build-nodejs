@@ -1,13 +1,19 @@
-# Security Policy
+= Security Policy
 
-## Supported Versions
+== Supported Versions
 
 The versions currently being supported with security updates are:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 2.0.x   | :heavy_check_mark: |
+[cols="1,1"]
+|===
+|Version
+|Supported
 
-## Reporting a Vulnerability
+a| 2.0.x
+a| * [x] No issue
+
+|=== 
+
+== Reporting a Vulnerability
 
 Security issues should be reported [here](https://github.com/r2d2bzh/docker-build-nodejs/issues/new?assignees=&labels=security&template=security-issue.md&title=).
