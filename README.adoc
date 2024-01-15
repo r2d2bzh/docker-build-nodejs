@@ -1,0 +1,251 @@
+:icons: font
+:source-highlighter: highlightjs
+
+
+:esbuild: https://github.com/evanw/esbuild
+:sea: https://nodejs.org/api/single-executable-applications.html
+
+= NodeJS image builder
+
+Developing NodeJS applications can be challenging, dockerizing them for production use adds another layer of complexity as only the application's functional scope should be provided by the production image.
+
+`docker-build-nodejs` helps in building a production image that is reduced to the application's functional scope.
+
+In order to do this, `docker-build-nodejs` relies on:
+
+- {esbuild}[esbuild] for the tree shaking
+- {sea}[Node Single Executable Applications] to bundle the javascript file into an executable
+- https://github.com/GoogleContainerTools/distroless[Google's distroless docker images] to ensure only the NodeJS based executable is available in the production image
+
+[NOTE]
+====
+The following sections detail how these different Docker images can be used to embed a NodeJS application.
+
+Particular details are given about `docker-compose` usage, the steps described in these compose sections are optional.
+You can bypass them if you do not want to use `docker-compose`.
+
+*But* you will still have to *read these sections* in order to get a better understanding of how to use the images.
+====
+
+== Images provided
+
+This repository mainly builds three Docker images.
+
+The `docker-build-nodejs-devenv` image is provided to ease the building of a Docker image tailored for development.
+
+The two other images are designed as a mean to build production Docker images embedding a NodeJS based application:
+
+* `docker-build-nodejs-builder` is in charge of building a Linux executable from the Javascript files
+* `docker-build-nodejs-runtime` is in charge of providing the *minimal* base environment for the Linux executable to run on
+
+
+== Using a dockerized development environment
+
+The goal is to ensure the usage of predictable versions of commands such as `npm` or `node`.
+To do this, a development Docker container providing the necessary versions of these tools is started.
+One key point is that all these tools need to be started by a user with the same user and group identifiers as the ones used by the developer on its host.
+
+=== Creating a https://docs.docker.com/engine/reference/builder/[Dockerfile]
+
+You will have to provide a `Dockerfile` with at least the following line:
+
+.Dockerfile.dev
+[source, Dockerfile]
+----
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-devenv:dev
+----
+
+IMPORTANT: Replace the tag `dev` with a tag delivered on the https://github.com/r2d2bzh/docker-build-nodejs[r2d2bzh/docker-build-nodejs project].
+
+=== Creating a https://docs.docker.com/compose/compose-file/[docker-compose file]
+
+This `docker-compose.yml` file will help to easily build and start the development container.
+
+It should contain something close to the following:
+
+.docker-compose.yml
+[source, YAML]
+----
+  dev:
+    build:
+      context: dev
+      args:
+        USER: ${LOGNAME}
+        UID: ${UID}
+        GID: ${GID}
+    volumes:
+      - .:/home/user/dev
+----
+
+[TIP]
+====
+Most of the time the `UID` variable is already defined by your shell but is not exported.
+`GID` must be the numeric identifier of your user default group.
+`USER` can also be defined if you need to change the username for whatever reason, it can be for instance set to `${LOGNAME}` in the compose file as this is the POSIX variable containing the host's user login name.
+
+Hence:
+
+..profile
+[source, sh]
+----
+export UID
+export GID=$(id -g)
+----
+====
+
+=== Starting and using the development environment
+
+To start the development environment simply issue the following command:
+
+[source, Bash]
+----
+docker-compose up -d dev
+----
+
+You can now use any NodeJS related command within the container as you would do it directly in the project by prefixing it with `docker-compose exec dev`, for instance:
+
+[source,Bash]
+----
+docker-compose exec dev npm install
+----
+
+TIP: You can define a shell alias to avoid typing the whole command each time (`alias ded=docker-compose exec dev` to be able to type `ded npm install`) but beware that you will lose the completion provided for the `docker-compose` command.
+
+
+== Embedding a NodeJS application
+
+Embedding a NodeJS application is necessary to provide a production Docker image which guarantees that no other command than the application itself can be started in a container based on this image.
+In particular, no shell is available within such a container.
+
+=== Creating a https://docs.docker.com/engine/reference/builder/[Dockerfile]
+
+You will have to provide a `Dockerfile` with at least the following two lines:
+
+.Dockerfile
+[source, Dockerfile]
+----
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev as builder
+COPY --chown=user . /project
+RUN /build.sh
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-runtime:dev
+COPY --chown=user --from=builder /tmp/service /service
+ENTRYPOINT [ "/service" ]
+COPY --chown=user ./resources /resources
+----
+
+IMPORTANT: Replace the tag `dev` with a tag delivered on the https://github.com/r2d2bzh/docker-build-nodejs[r2d2bzh/docker-build-nodejs project].
+
+This `Dockerfile` should be located at the root of your NodeJS project or at least in a folder containing all the source code of the NodeJS application.
+
+You can optionally add additional `Dockerfile` commands, it is at least recommended to document the port the NodeJS application is listening on (if the NodeJS application offers such a port):
+
+.Dockerfile
+[source, Dockerfile]
+----
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev as builder
+COPY --chown=user . /project
+RUN /build.sh
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-runtime:dev
+COPY --chown=user --from=builder /tmp/service /service
+ENTRYPOINT [ "/service" ]
+COPY --chown=user ./resources /resources
+EXPOSE 8080
+----
+
+WARNING: Do not modify the entry point of the Docker image with `ENTRYPOINT` as the default entry point is already the application executable.
+
+WARNING: Use the *same tag* for both `FROM` instructions as both `builder` and `runtime` images are closely related.
+
+=== Specifying the application's main module
+
+By default {esbuild}[esbuild] will be passed `index.js` as the main module of the application to embed.
+If the application main module is not `index.js`, simply set the `main` build argument to the right path of the main module:
+
+[source,yaml]
+----
+test-simple:
+  build:
+    context: test/simple
+    args:
+      main: simple.js
+----
+
+=== Building the Docker image
+
+Once the `Dockerfile` is available, you can at least operate a test build with the following command:
+
+[source, Bash]
+----
+cd <Dockerfile folder>
+docker build -t <target> .
+----
+
+Once the build succeeds, the image can be tested:
+
+[source, Bash]
+----
+docker run --rm -it <target>
+----
+
+TIP: Do not forget to https://docs.docker.com/engine/reference/commandline/run/#publish-or-expose-port--p---expose[publish the port] your application is listening on to operate some requests from your development platform.
+
+=== Building the Docker image with a compose file
+
+To avoid repeating on and on the same `docker build` command with all its arguments, you might want to create a `docker-compose.yml` file detailing this data, i.e.:
+
+.docker-compose.yml
+[source, YAML]
+----
+services:
+  production:
+    image: <target>
+    build:
+      context: <Dockerfile folder>
+----
+
+Once the compose file is available, simply issue the command `docker-compose build production` to build the image.
+You can also push this new image to a registry with `docker-compose push production` as long as the image tag refers to a location on this registry.
+
+=== Native modules
+
+Automatic native modules bundling {esbuild}/issues/1051[might sometimes fail] for various reasons.
+The main reason is most of the time because the files to bundle {esbuild}/issues/1051#issuecomment-807732496[cannot be inferred by esbuild].
+
+In these particular cases, follow the instructions provided in the console where the build was operated:
+
+.excerpt from builder/bundle/index.js
+[source, javascript]
+----
+console.warn('/!\\ Some node modules were automatically externalized');
+console.warn('If one of these modules can still NOT be loaded:');
+console.warn(' - add the module name in your package.json file under { esbuildOptions: { external: [...] } }');
+console.warn(' - add the module COPY line provided in the following list at the end of your Dockerfile');
+----
+
+The console then displays the list of externalized modules and the Dockerfile `COPY` lines to use.
+
+The `test/sharp` test case of this repository follows this advice for `sharp`:
+
+.package.json
+[source,json]
+----
+{
+  ...
+  "esbuildOptions": {
+    "external": ["sharp"]
+  },
+  ...
+}
+----
+
+.Dockerfile
+[source,dockerfile]
+----
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev as builder
+COPY --chown=user . /project
+RUN /build.sh
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-runtime:dev
+COPY --chown=user --from=builder /tmp/service /service
+COPY --from=builder /project/node_modules/ ./node_modules/
+ENTRYPOINT [ "/service" ]
+----
