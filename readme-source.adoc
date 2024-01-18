@@ -10,7 +10,7 @@ ifdef::env-github[]
 endif::[]
 
 :esbuild: https://github.com/evanw/esbuild
-:pkg: https://github.com/vercel/pkg
+:sea: https://nodejs.org/api/single-executable-applications.html
 
 = NodeJS image builder
 
@@ -20,13 +20,13 @@ Developing NodeJS applications can be challenging, dockerizing them for producti
 
 In order to do this, `docker-build-nodejs` relies on:
 
-- {pkg}[pkg] to bundle the application as a single executable
-- {esbuild}[esbuild] to work around current pkg's {pkg}/issues/1291[lack of support] for http://nodejs.org/dist/latest-v16.x/docs/api/esm.html[ESM]
+- {esbuild}[esbuild] for the tree shaking
+- {sea}[Node Single Executable Applications] to bundle the javascript file into an executable
 - https://github.com/GoogleContainerTools/distroless[Google's distroless docker images] to ensure only the NodeJS based executable is available in the production image
 
 [NOTE]
 ====
-The following sections details how these different Docker images can be used to embed a NodeJS application.
+The following sections detail how these different Docker images can be used to embed a NodeJS application.
 
 Particular details are given about `docker-compose` usage, the steps described in these compose sections are optional.
 You can bypass them if you do not want to use `docker-compose`.
@@ -42,22 +42,22 @@ The `docker-build-nodejs-devenv` image is provided to ease the building of a Doc
 
 The two other images are designed as a mean to build production Docker images embedding a NodeJS based application:
 
-* `docker-build-nodejs-builder` is in charge of a building a Linux executable from the Javascript files
+* `docker-build-nodejs-builder` is in charge of building a Linux executable from the Javascript files
 * `docker-build-nodejs-runtime` is in charge of providing the *minimal* base environment for the Linux executable to run on
 
 
 == Using a dockerized development environment
 
 The goal is to ensure the usage of predictable versions of commands such as `npm` or `node`.
-In order to do this, a development Docker container providing the necessary versions of these tools is started.
-One keypoint is that all these tools needs to be started by a user with the same user and group identifiers than the ones used by the developer on its host.
+To do this, a development Docker container providing the necessary versions of these tools is started.
+One key point is that all these tools need to be started by a user with the same user and group identifiers as the ones used by the developer on its host.
 
 === Creating a https://docs.docker.com/engine/reference/builder/[Dockerfile]
 
 You will have to provide a `Dockerfile` with at least the following line:
 
 .Dockerfile.dev
-[source,Dockerfile]
+[source, Dockerfile]
 ----
 include::dev/Dockerfile[]
 ----
@@ -71,7 +71,7 @@ This `docker-compose.yml` file will help to easily build and start the developme
 It should contain something close to the following:
 
 .docker-compose.yml
-[source,YAML]
+[source, YAML]
 ----
 include::docker-compose.yml[tags=dev]
 ----
@@ -85,7 +85,7 @@ Most of the time the `UID` variable is already defined by your shell but is not 
 Hence:
 
 ..profile
-[source,sh]
+[source, sh]
 ----
 export UID
 export GID=$(id -g)
@@ -96,7 +96,7 @@ export GID=$(id -g)
 
 To start the development environment simply issue the following command:
 
-[source,Bash]
+[source, Bash]
 ----
 docker-compose up -d dev
 ----
@@ -108,7 +108,7 @@ You can now use any NodeJS related command within the container as you would do 
 docker-compose exec dev npm install
 ----
 
-TIP: You can define a shell alias to avoid typing the whole command each time (`alias ded=docker-compose exec dev` to be able to type `ded npm install`) but beware that you will loose the completion provided for the `docker-compose` command.
+TIP: You can define a shell alias to avoid typing the whole command each time (`alias ded=docker-compose exec dev` to be able to type `ded npm install`) but beware that you will lose the completion provided for the `docker-compose` command.
 
 
 == Embedding a NodeJS application
@@ -121,7 +121,7 @@ In particular, no shell is available within such a container.
 You will have to provide a `Dockerfile` with at least the following two lines:
 
 .Dockerfile
-[source,Dockerfile]
+[source, Dockerfile]
 ----
 include::test/simple/Dockerfile[]
 ----
@@ -130,18 +130,16 @@ IMPORTANT: Replace the tag `dev` with a tag delivered on the https://github.com/
 
 This `Dockerfile` should be located at the root of your NodeJS project or at least in a folder containing all the source code of the NodeJS application.
 
-For an explanation of what is the `share` image see <<Passing assets from outside the build context>>.
-
 You can optionally add additional `Dockerfile` commands, it is at least recommended to document the port the NodeJS application is listening on (if the NodeJS application offers such a port):
 
 .Dockerfile
-[source,Dockerfile]
+[source, Dockerfile]
 ----
 include::test/simple/Dockerfile[]
 EXPOSE 8080
 ----
 
-WARNING: Do not modify the entrypoint of the Docker image with `ENTRYPOINT` as the default entrypoint is already the application executable.
+WARNING: Do not modify the entry point of the Docker image with `ENTRYPOINT` as the default entry point is already the application executable.
 
 WARNING: Use the *same tag* for both `FROM` instructions as both `builder` and `runtime` images are closely related.
 
@@ -159,7 +157,7 @@ include::docker-compose.yml[tag=test-simple,indent=0]
 
 Once the `Dockerfile` is available, you can at least operate a test build with the following command:
 
-[source,Bash]
+[source, Bash]
 ----
 cd <Dockerfile folder>
 docker build -t <target> .
@@ -167,19 +165,19 @@ docker build -t <target> .
 
 Once the build succeeds, the image can be tested:
 
-[source,Bash]
+[source, Bash]
 ----
 docker run --rm -it <target>
 ----
 
-TIP: Do not forget to https://docs.docker.com/engine/reference/commandline/run/#publish-or-expose-port--p---expose[publish the port] your application is listening on in order to operate some requests from your development platform.
+TIP: Do not forget to https://docs.docker.com/engine/reference/commandline/run/#publish-or-expose-port--p---expose[publish the port] your application is listening on to operate some requests from your development platform.
 
 === Building the Docker image with a compose file
 
-In order to avoid repeating on and on the same `docker build` command with all its arguments, you might want to create a `docker-compose.yml` file detailing this data, i.e.:
+To avoid repeating on and on the same `docker build` command with all its arguments, you might want to create a `docker-compose.yml` file detailing this data, i.e.:
 
 .docker-compose.yml
-[source,YAML]
+[source, YAML]
 ----
 services:
   production:
@@ -194,19 +192,19 @@ You can also push this new image to a registry with `docker-compose push product
 === Native modules
 
 Automatic native modules bundling {esbuild}/issues/1051[might sometimes fail] for various reasons.
-The main reason is most of the time due to the fact that the files to bundle {esbuild}/issues/1051#issuecomment-807732496[cannot be inferred by esbuild].
+The main reason is most of the time because the files to bundle {esbuild}/issues/1051#issuecomment-807732496[cannot be inferred by esbuild].
 
 In these particular cases, follow the instructions provided in the console where the build was operated:
 
 .excerpt from builder/bundle/index.js
-[source,javascript]
+[source, javascript]
 ----
 include::builder/bundle/index.js[tag=external-warning,indent=0]
 ----
 
 The console then displays the list of externalized modules and the Dockerfile `COPY` lines to use.
 
-The `test/sharp` test case of this repository follows these advices for `sharp`:
+The `test/sharp` test case of this repository follows this advice for `sharp`:
 
 .package.json
 [source,json]
@@ -223,17 +221,3 @@ include::test/sharp/package.json[tag=esbuild-options]
 ----
 include::test/sharp/Dockerfile[]
 ----
-
-=== Passing assets from outside the build context
-
-For most cases, you only need to rely on the build context to build your image and that is a good thing because you can rely on the https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache[build cache].
-
-During the build steps of a NodeJS application, assets are already downloaded from outside of the build context, namely the NPM packages that the `package-lock.json` project file details.
-But what if you do not want to get assets from the outside world (outside meaning here "not Docker related")?
-
-You can do this thanks to a `share` image.
-The *whole root filesystem* of the `share` image is copied in the project context of the `builder` image before the NodeJS application is embedded as an executable (before the `esbuild` step).
-So particular care has to be taken to not overlap what is already provided by the build context (unless this is intentional).
-
-As there is currently no way to operate this `ONBUILD COPY` step optionally (by using a build `ARG` for instance), the declaration of this `share` image is *mandatory*.
-This is why the line `FROM scratch as share` is present before the `builder` image when there is no need for assets outside of the build context (`scratch` is https://hub.docker.com/_/scratch[an empty image] meaning that no assets are brought).

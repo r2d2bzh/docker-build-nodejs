@@ -1,8 +1,8 @@
-const { extname } = require('path')
+import { extname } from 'node:path';
 
 const markerModules = ['bindings', 'nan', 'node-gyp', 'node-gyp-build', 'node-pre-gyp', 'prebuild']
 
-const isNativeModule = ({ binary, dependencies = {}, devDependencies = {}, files = [], gypfile }) => {
+export const isNativeModule = ({ binary, dependencies = {}, devDependencies = {}, files = [], gypfile }) => {
   if (binary || gypfile) {
     return true
   }
@@ -17,5 +17,3 @@ const isNativeModule = ({ binary, dependencies = {}, devDependencies = {}, files
 
   return hasBinaryFile
 }
-
-module.exports = { isNativeModule }

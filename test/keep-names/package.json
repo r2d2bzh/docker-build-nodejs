@@ -13,12 +13,13 @@
     "external": [
       "avsc",
       "protobufjs/minimal",
-      "thrift"
+      "thrift",
+      "kafka-node"
     ]
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "moleculer": "^0.14.23"
+    "moleculer": "^0.14.32"
   }
 }

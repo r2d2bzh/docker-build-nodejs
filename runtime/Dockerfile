@@ -1,5 +1,1 @@
-FROM gcr.io/distroless/cc-debian11@sha256:15bc3c6acbe16bf3dc37db543dfa632dabf3869ccd123257e9bee965989c976e
-
-ONBUILD COPY --from=builder /tmp/service /
-
-ONBUILD ENTRYPOINT ["/service"]
+FROM gcr.io/distroless/cc-debian12@sha256:6714977f9f02632c31377650c15d89a7efaebf43bab0f37c712c30fc01edb973

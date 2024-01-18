@@ -19,20 +19,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build base images
-        run: . ./ensure-compose-env.sh && docker-compose build builder runtime
+        run: . ./ensure-compose-env.sh && docker compose build builder runtime devenv
 
       - name: Build test images
-        run: . ./ensure-compose-env.sh && docker-compose --profile test build
+        run: . ./ensure-compose-env.sh && docker compose --profile test build
 
       - name: Run test suite
-        run: . ./ensure-compose-env.sh && docker-compose run --rm test
+        run: . ./ensure-compose-env.sh && docker compose run --rm test
 
       - name: Tear down containers
         if: always()
-        run: . ./ensure-compose-env.sh && docker-compose down
+        run: . ./ensure-compose-env.sh && docker compose down
 
   builder:
     needs: test
@@ -60,7 +60,7 @@ jobs:
     needs: runtime
     permissions:
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Run Trivy on runtime image
         uses: aquasecurity/trivy-action@2a2157eb22c08c9a1fac99263430307b8d1bc7a2
@@ -72,6 +72,6 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'

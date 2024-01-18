@@ -1,7 +1,11 @@
 // This test sample ensures the support for native modules
 try {
   const Peer = require('simple-peer');
-  const wrtc = require('wrtc');
+
+  const { createRequire } = require('node:module');
+  const customRequire = createRequire(__filename); 
+
+  const wrtc = customRequire('./node_modules/wrtc/lib/index.js');
 
   const peer1 = new Peer({initiator: true, wrtc});
   const peer2 = new Peer({wrtc});
