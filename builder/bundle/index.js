@@ -3,7 +3,6 @@ import esbuild from 'esbuild';
 
 import { externalNativeModulesPlugin } from './native_modules/plugin.js';
 
-
 const [target, main, outfile] = process.argv.slice(2);
 
 const bundle = async () => {

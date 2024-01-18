@@ -1,9 +1,9 @@
-try {
-  const { Readable } = require('stream');
-  const hasha = require('hasha');
+import { Readable } from 'node:stream';
+import hasha from 'hasha';
+import { createRequire } from 'node:module';
 
-  const { createRequire } = require('node:module');
-  const customRequire = createRequire(__filename); 
+try {
+  const customRequire = createRequire(__filename);
 
   const sharp = customRequire('./node_modules/sharp/lib/index.js');
 
