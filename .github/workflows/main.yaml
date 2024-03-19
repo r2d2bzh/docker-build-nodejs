@@ -4,8 +4,12 @@ name: Test and build
 on:
 
   push:
+    branches: [ main ]
     # Publish semver tags as releases.
     tags: [ '*.*.*' ]
+
+  pull_request:
+    branches: [ main ]
 
 
 jobs:
