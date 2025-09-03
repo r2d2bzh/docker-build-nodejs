@@ -1,6 +1,6 @@
 ARG NODE_JS_VERSION
 
-FROM node:${NODE_JS_VERSION}-bookworm-slim as pkg
+FROM node:${NODE_JS_VERSION}-bookworm-slim AS pkg
 
 ARG NODE_JS_VERSION
 ARG NODE=node${NODE_JS_VERSION}

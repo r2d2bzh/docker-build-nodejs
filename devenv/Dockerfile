@@ -2,7 +2,7 @@ ARG NODE_JS_VERSION
 
 FROM node:${NODE_JS_VERSION}-bookworm-slim
 
-RUN apt-get update && apt-get install sudo
+RUN apt-get update && apt-get -y install sudo curl
 
 ONBUILD ARG USER=user
 ONBUILD ARG UID=1001

@@ -20,6 +20,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "moleculer": "^0.14.32"
+    "moleculer": "^0.14.35"
   }
 }

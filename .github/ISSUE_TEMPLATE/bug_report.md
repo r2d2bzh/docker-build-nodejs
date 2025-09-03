@@ -20,9 +20,10 @@ A clear and concise description of what you expected to happen.
 If applicable, logs involved in the description of your problem.
 
 **Desktop (please complete the following information):**
- - `uname -a` output
- - `docker --version` output
- - `docker-compose --version` output
+
+- `uname -a` output
+- `docker --version` output
+- `docker-compose --version` output
 
 **Additional context**
 Add any other context about the problem here.

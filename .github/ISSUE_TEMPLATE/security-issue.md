@@ -14,9 +14,10 @@ A clear and concise description of the security threat.
 A pointer to a repository reproducing the issue.
 
 **Desktop (please complete the following information):**
- - `uname -a` output
- - `docker --version` output
- - `docker-compose --version` output
+
+- `uname -a` output
+- `docker --version` output
+- `docker-compose --version` output
 
 **Additional context**
 Add any other context about the issue here.
