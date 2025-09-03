@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/r2d2bzh/docker-build-nodejs/compare/3.1.0...3.1.1) (2025-09-03)
+
+
+### Bug Fixes
+
+* **ci:** Add reference in trivy-action image ([4c4e765](https://github.com/r2d2bzh/docker-build-nodejs/commit/4c4e76521ada2457adef1b93481092119dd884f5))
+
 # [3.1.0](https://github.com/r2d2bzh/docker-build-nodejs/compare/3.0.0...3.1.0) (2025-09-03)
 
 
