@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Run Trivy on runtime image
-        uses: aquasecurity/trivy-action@2a2157eb22c08c9a1fac99263430307b8d1bc7a2
+        uses: aquasecurity/trivy-action
         with:
           image-ref: 'ghcr.io/r2d2bzh/docker-build-nodejs-runtime:${{ github.ref_name }}'
           format: 'template'
