@@ -1,5 +1,12 @@
 # Changelog
 
+# [3.2.0](https://github.com/r2d2bzh/docker-build-nodejs/compare/3.1.1...3.2.0) (2026-02-09)
+
+
+### Features
+
+* **node/24.13.0:** Update to latest version of Node.Js ([16dea97](https://github.com/r2d2bzh/docker-build-nodejs/commit/16dea97bf208fb0f9b440ec54f0faf0ffafc802f))
+
 ## [3.1.1](https://github.com/r2d2bzh/docker-build-nodejs/compare/3.1.0...3.1.1) (2025-09-03)
 
 
