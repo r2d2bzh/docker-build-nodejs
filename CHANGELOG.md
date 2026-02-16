@@ -1,5 +1,12 @@
 # Changelog
 
+# [3.3.0](https://github.com/r2d2bzh/docker-build-nodejs/compare/3.2.0...3.3.0) (2026-02-16)
+
+
+### Features
+
+* **runtime:** Update to latest distroless debian12 version ([167e6e9](https://github.com/r2d2bzh/docker-build-nodejs/commit/167e6e907ce5e60c980ecf9a608200bdb37d6cfd))
+
 # [3.2.0](https://github.com/r2d2bzh/docker-build-nodejs/compare/3.1.1...3.2.0) (2026-02-09)
 
 
