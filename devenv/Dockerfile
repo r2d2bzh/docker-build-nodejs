@@ -1,6 +1,6 @@
 ARG NODE_JS_VERSION
 
-FROM node:${NODE_JS_VERSION}-bookworm-slim
+FROM node:${NODE_JS_VERSION}-trixie-slim
 
 RUN apt-get update && apt-get -y install sudo curl
 
