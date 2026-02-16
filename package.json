@@ -1,6 +1,6 @@
 {
   "name": "docker-build-nodejs",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Tooling to build docker Node.Js images",
   "main": "index.js",
   "directories": {
