@@ -12,14 +12,18 @@ on:
     branches: [ main ]
 
 
+permissions:
+  contents: read
+
+
 jobs:
 
   test:
-    timeout-minutes: 10
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Build base images
         run: . ./ensure-compose-env.sh && docker compose build builder runtime devenv
@@ -32,46 +36,43 @@ jobs:
 
       - name: Tear down containers
         if: always()
-        run: . ./ensure-compose-env.sh && docker compose down
+        run: . ./ensure-compose-env.sh && docker compose --profile test down
 
-  builder:
+  publish:
     needs: test
-    # https://github.community/t/ref-head-in-reusable-workflows/203690/30
-    uses: r2d2bzh/docker-build-nodejs/.github/workflows/docker-publish.yaml@main
+    strategy:
+      matrix:
+        image: [ builder, devenv, runtime ]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/docker-publish.yaml
     with:
-      image_name_suffix: builder
-
-  devenv:
-    needs: test
-    # https://github.community/t/ref-head-in-reusable-workflows/203690/30
-    uses: r2d2bzh/docker-build-nodejs/.github/workflows/docker-publish.yaml@main
-    with:
-      image_name_suffix: devenv
-
-  runtime:
-    needs: test
-    # https://github.community/t/ref-head-in-reusable-workflows/203690/30
-    uses: r2d2bzh/docker-build-nodejs/.github/workflows/docker-publish.yaml@main
-    with:
-      image_name_suffix: runtime
+      image_name_suffix: ${{ matrix.image }}
 
   trivy-main:
     if: ${{ github.ref_name == 'main' }}
-    needs: runtime
+    needs: publish
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [ builder, runtime ]
     permissions:
+      contents: read
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - name: Run Trivy on runtime image
-        uses: aquasecurity/trivy-action@2a2157eb22c08c9a1fac99263430307b8d1bc7a2
+      - name: Run Trivy on ${{ matrix.image }} image
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: 'ghcr.io/r2d2bzh/docker-build-nodejs-runtime:${{ github.ref_name }}'
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
+          image-ref: 'ghcr.io/${{ github.repository }}-${{ matrix.image }}:${{ github.ref_name }}'
+          format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
         with:
           sarif_file: 'trivy-results.sarif'
+          category: 'trivy-${{ matrix.image }}'

@@ -1,5 +1,7 @@
 {
   "main": "bundle.js",
-  "output": "service.blob",
-  "disableExperimentalSEAWarning": true
+  "output": "/tmp/service",
+  "disableExperimentalSEAWarning": true,
+  "useCodeCache": true,
+  "execArgv": ["--enable-source-maps"]
 }

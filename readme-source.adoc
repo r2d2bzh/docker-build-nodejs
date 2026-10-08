@@ -143,14 +143,24 @@ WARNING: Do not modify the entry point of the Docker image with `ENTRYPOINT` as 
 
 WARNING: Use the *same tag* for both `FROM` instructions as both `builder` and `runtime` images are closely related.
 
+=== Runtime user and file ownership
+
+The application runs as the distroless `nonroot` user (uid/gid `65532`) and the working directory is `/`.
+
+Files copied into the runtime image are owned by `root` unless specified otherwise, which is the recommended setup: the application can read them but cannot alter them.
+If the application needs to write somewhere, use a mounted volume or explicitly give the ownership to the runtime user with `COPY --chown=nonroot ...`.
+
+NOTE: Up to version 3.x the application was started as `root`, the `--chown=user` option previously documented had no effect as the `user` account does not exist in the runtime image.
+
 === Specifying the application's main module
 
-By default {esbuild}[esbuild] will be passed `index.js` as the main module of the application to embed.
-If the application main module is not `index.js`, simply set the `main` build argument to the right path of the main module:
+The main module of the application is read from the `main` field of its `package.json` file, which is therefore *required*.
+It can be a JavaScript or a TypeScript file as {esbuild}[esbuild] strips TypeScript types (types are *not* checked, run `tsc --noEmit` beforehand if needed):
 
-[source,yaml]
+.package.json
+[source,json]
 ----
-include::docker-compose.yml[tag=test-simple,indent=0]
+include::test/typescript/package.json[lines=5]
 ----
 
 === Building the Docker image

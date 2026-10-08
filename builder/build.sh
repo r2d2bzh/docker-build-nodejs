@@ -1,11 +1,14 @@
 #! /bin/sh
 
+set -eu
+
 npm ci --omit=dev
 
-main=`node -e 'console.log(require("./package.json").main)'`
+main=$(node -p 'require("./package.json").main ?? ""')
+if [ -z "$main" ]; then
+    echo 'build.sh: the "main" field of package.json is required to locate the application entry point' >&2
+    exit 1
+fi
 
-node /bundle ${NODE} $main "bundle.js"
-node --experimental-sea-config /bundle/sea-config.json
-cp $(command -v node) /tmp/service
-npx postject@1.0.0-alpha.6 /tmp/service NODE_SEA_BLOB service.blob \
-    --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
+node /bundle "${NODE}" "$main" bundle.js
+node --build-sea /bundle/sea-config.json

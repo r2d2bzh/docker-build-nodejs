@@ -10,6 +10,10 @@ on:
       - '**'
 
 
+permissions:
+  contents: write
+
+
 jobs:
 
   build:
@@ -20,10 +24,10 @@ jobs:
         run: sudo gem install asciidoctor-reducer --pre
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Reduce readme
         run: asciidoctor-reducer -o README.adoc readme-source.adoc
 
       - name: Commit readme
-        uses: EndBug/add-and-commit@v8
+        uses: EndBug/add-and-commit@cc9c08ba6c8df3b93a8f2db63e89b98368ae2ae8 # v11.1.1

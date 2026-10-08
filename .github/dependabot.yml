@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+
+  # Base images pinned by digest (the Node.js version itself is set in .env)
+  - package-ecosystem: docker
+    directory: /runtime
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: npm
+    directories:
+      - /
+      - /builder/bundle
+    schedule:
+      interval: weekly

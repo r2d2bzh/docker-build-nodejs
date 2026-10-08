@@ -17,8 +17,6 @@ services:
   test-config:
     build:
       context: test/config
-    volumes:
-      - ./test/config/config:/home/nonroot/config
     profiles:
       - test
 
@@ -46,13 +44,21 @@ services:
     profiles:
       - test
 
-  # tag::test-simple[]
+  test-nonroot:
+    build:
+      context: test/nonroot
+    profiles:
+      - test
+
   test-simple:
     build:
       context: test/simple
-      args:
-        main: simple.js
-  # end::test-simple[]
+    profiles:
+      - test
+
+  test-typescript:
+    build:
+      context: test/typescript
     profiles:
       - test
 
@@ -70,8 +76,10 @@ services:
       test-dynamic: { condition: service_completed_successfully }
       test-esm: { condition: service_completed_successfully }
       test-keep-names: { condition: service_completed_successfully }
+      test-nonroot: { condition: service_completed_successfully }
       test-sharp: { condition: service_completed_successfully }
       test-simple: { condition: service_completed_successfully }
+      test-typescript: { condition: service_completed_successfully }
       test-wrtc: { condition: service_completed_successfully }
     profiles:
       - test
