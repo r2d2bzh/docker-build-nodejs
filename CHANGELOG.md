@@ -1,5 +1,20 @@
 # Changelog
 
+# [4.0.0-0](https://github.com/r2d2bzh/docker-build-nodejs/compare/3.4.0...4.0.0-0) (2026-10-08)
+
+
+* feat!: switch to Node.js 26, nonroot runtime and node --build-sea ([9d65c2a](https://github.com/r2d2bzh/docker-build-nodejs/commit/9d65c2a1dd547a9eae80287aa905c3c2c92bc47e))
+
+
+### BREAKING CHANGES
+
+* the service now runs as the distroless nonroot user
+(uid/gid 65532) instead of root. Files copied into the runtime image are
+owned by root unless COPY --chown=nonroot is used; the previously
+documented --chown=user had no effect. Services writing to the filesystem
+must use a volume or give ownership to nonroot. The package.json main
+field is now mandatory.
+
 # [3.4.0](https://github.com/r2d2bzh/docker-build-nodejs/compare/3.3.0...3.4.0) (2026-02-16)
 
 
