@@ -1,0 +1,10 @@
+{
+  "name": "test-typescript",
+  "version": "0.0.0",
+  "description": "test Docker image build procedure for a TypeScript based service",
+  "main": "index.ts",
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

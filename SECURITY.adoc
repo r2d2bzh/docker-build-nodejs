@@ -4,16 +4,25 @@
 
 The versions currently being supported with security updates are:
 
-[cols="1,1"]
+[cols="1,1,1"]
 |===
 |Version
+|Node.js
 |Supported
 
-a| 2.0.x
-a| * [x] No issue
+a| 3.4.x
+a| 24
+a| * [x] Yes, until 4.0.0 is released
 
-|=== 
+a| 4.0.0 pre-releases
+a| 26
+a| * [ ] No, for validation purposes only
+
+a| < 3.4
+a| 24 and older
+a| * [ ] No
+|===
 
 == Reporting a Vulnerability
 
-Security issues should be reported [here](https://github.com/r2d2bzh/docker-build-nodejs/issues/new?assignees=&labels=security&template=security-issue.md&title=).
+Security issues should be reported https://github.com/r2d2bzh/docker-build-nodejs/issues/new?assignees=&labels=security&template=security-issue.md&title=[here].

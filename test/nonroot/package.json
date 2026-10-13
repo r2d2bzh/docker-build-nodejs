@@ -1,0 +1,9 @@
+{
+  "name": "test-nonroot",
+  "version": "0.0.0",
+  "description": "test that the runtime image does not run the service as root",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

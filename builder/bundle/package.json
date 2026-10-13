@@ -8,8 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "esbuild": "0.19.11",
-    "read-package-json-fast": "^3.0.2"
+    "esbuild": "0.28.2",
+    "read-package-json-fast": "^6.0.0"
   },
   "author": "",
   "license": "ISC"

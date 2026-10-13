@@ -124,13 +124,13 @@ You will have to provide a `Dockerfile` with at least the following two lines:
 .Dockerfile
 [source, Dockerfile]
 ----
-FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev as builder
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev AS builder
 COPY --chown=user . /project
 RUN /build.sh
 FROM ghcr.io/r2d2bzh/docker-build-nodejs-runtime:dev
-COPY --chown=user --from=builder /tmp/service /service
+COPY --from=builder /tmp/service /service
 ENTRYPOINT [ "/service" ]
-COPY --chown=user ./resources /resources
+COPY ./resources /resources
 ----
 
 IMPORTANT: Replace the tag `dev` with a tag delivered on the https://github.com/r2d2bzh/docker-build-nodejs[r2d2bzh/docker-build-nodejs project].
@@ -142,13 +142,13 @@ You can optionally add additional `Dockerfile` commands, it is at least recommen
 .Dockerfile
 [source, Dockerfile]
 ----
-FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev as builder
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev AS builder
 COPY --chown=user . /project
 RUN /build.sh
 FROM ghcr.io/r2d2bzh/docker-build-nodejs-runtime:dev
-COPY --chown=user --from=builder /tmp/service /service
+COPY --from=builder /tmp/service /service
 ENTRYPOINT [ "/service" ]
-COPY --chown=user ./resources /resources
+COPY ./resources /resources
 EXPOSE 8080
 ----
 
@@ -156,18 +156,24 @@ WARNING: Do not modify the entry point of the Docker image with `ENTRYPOINT` as 
 
 WARNING: Use the *same tag* for both `FROM` instructions as both `builder` and `runtime` images are closely related.
 
+=== Runtime user and file ownership
+
+The application runs as the distroless `nonroot` user (uid/gid `65532`) and the working directory is `/`.
+
+Files copied into the runtime image are owned by `root` unless specified otherwise, which is the recommended setup: the application can read them but cannot alter them.
+If the application needs to write somewhere, use a mounted volume or explicitly give the ownership to the runtime user with `COPY --chown=nonroot ...`.
+
+NOTE: Up to version 3.x the application was started as `root`, the `--chown=user` option previously documented had no effect as the `user` account does not exist in the runtime image.
+
 === Specifying the application's main module
 
-By default {esbuild}[esbuild] will be passed `index.js` as the main module of the application to embed.
-If the application main module is not `index.js`, simply set the `main` build argument to the right path of the main module:
+The main module of the application is read from the `main` field of its `package.json` file, which is therefore *required*.
+It can be a JavaScript or a TypeScript file as {esbuild}[esbuild] strips TypeScript types (types are *not* checked, run `tsc --noEmit` beforehand if needed):
 
-[source,yaml]
+.package.json
+[source,json]
 ----
-test-simple:
-  build:
-    context: test/simple
-    args:
-      main: simple.js
+  "main": "index.ts",
 ----
 
 === Building the Docker image
@@ -232,7 +238,9 @@ The `test/sharp` test case of this repository follows this advice for `sharp`:
 {
   ...
   "esbuildOptions": {
-    "external": ["sharp"]
+    "external": [
+      "sharp"
+    ]
   },
   ...
 }
@@ -241,11 +249,11 @@ The `test/sharp` test case of this repository follows this advice for `sharp`:
 .Dockerfile
 [source,dockerfile]
 ----
-FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev as builder
+FROM ghcr.io/r2d2bzh/docker-build-nodejs-builder:dev AS builder
 COPY --chown=user . /project
 RUN /build.sh
 FROM ghcr.io/r2d2bzh/docker-build-nodejs-runtime:dev
-COPY --chown=user --from=builder /tmp/service /service
+COPY --from=builder /tmp/service /service
 COPY --from=builder /project/node_modules/ ./node_modules/
 ENTRYPOINT [ "/service" ]
 ----
