@@ -1,5 +1,7 @@
 # Changelog
 
+# [4.0.0](https://github.com/r2d2bzh/docker-build-nodejs/compare/4.0.0-0...4.0.0) (2026-10-13)
+
 # [4.0.0-0](https://github.com/r2d2bzh/docker-build-nodejs/compare/3.4.0...4.0.0-0) (2026-10-08)
 
 
