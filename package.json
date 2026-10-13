@@ -7,7 +7,7 @@
     "test": "test"
   },
   "dependencies": {
-    "release-it": "^19.2.4",
+    "release-it": "^21.1.1",
     "@release-it/conventional-changelog": "10.0.5"
   },
   "scripts": {
