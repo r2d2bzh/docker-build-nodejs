@@ -10,15 +10,11 @@ The versions currently being supported with security updates are:
 |Node.js
 |Supported
 
-a| 3.4.x
-a| 24
-a| * [x] Yes, until 4.0.0 is released
-
-a| 4.0.0 pre-releases
+a| 4.0.x
 a| 26
-a| * [ ] No, for validation purposes only
+a| * [x] Yes
 
-a| < 3.4
+a| < 4.0
 a| 24 and older
 a| * [ ] No
 |===
