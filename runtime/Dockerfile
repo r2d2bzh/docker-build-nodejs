@@ -10,7 +10,7 @@ RUN apt-get update && \
     dpkg-deb --field libatomic1_*.deb > /out/var/lib/dpkg/status.d/libatomic1 && \
     rm -rf /out/usr/share /var/lib/apt/lists/*
 
-FROM gcr.io/distroless/cc-debian13:nonroot@sha256:e792ab3d241a468a4fd7519ddbbebe66b49b5f365771716ea688ad40b6c6f1c2
+FROM gcr.io/distroless/cc-debian13:nonroot@sha256:83b9b50586253821cf63ffcec87d3d94265a093ad30da232039af962dd8f4edf
 
 COPY --from=libs /out/ /
 
