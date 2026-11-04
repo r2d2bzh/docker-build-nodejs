@@ -1,7 +1,7 @@
 # Node.js >= 26 official binaries depend on libatomic.so.1 which is not part of distroless cc.
 # The library is extracted from the matching Debian release, along with its dpkg status
 # so that image scanners keep tracking it, the same way distroless does for its own packages.
-FROM debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2bad10d765c46aea49f11f AS libs
+FROM debian:trixie-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4 AS libs
 
 RUN apt-get update && \
     cd /tmp && apt-get download libatomic1 && \
